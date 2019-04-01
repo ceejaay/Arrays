@@ -20,6 +20,19 @@ typedef struct Array {
  * Allocate memory for a new array
  *****/
 Array *create_array (int capacity) {
+  Array *newArray = malloc(sizeof(Array));
+  newArray->capacity = capacity;
+  newArray->count = 0;
+  newArray->elements = malloc(capacity * sizeof(char));
+  /* not sure what elments is/are */ 
+  /* newArray->elements = */ 
+  /* newArray->count = capacity/sizeof(elments) */
+
+  return newArray;
+
+
+
+
   // Allocate memory for the Array struct
 
   // Set initial values for capacity and count
@@ -33,7 +46,10 @@ Array *create_array (int capacity) {
  * Free memory for an array and all of its stored elements
  *****/
 void destroy_array(Array *arr) {
-
+  if(arr != NULL) {
+    free(arr->elements);
+    free(arr);
+  }
   // Free all elements
 
   // Free array
@@ -45,6 +61,8 @@ void destroy_array(Array *arr) {
  * from old to new
  *****/
 void resize_array(Array *arr) {
+
+
 
   // Create a new element storage with double capacity
 
@@ -98,7 +116,12 @@ void arr_insert(Array *arr, char *element, int index) {
  * Append an element to the end of the array
  *****/
 void arr_append(Array *arr, char *element) {
-
+  if(arr->capacity < arr->count + 1) {
+    fprintf(stderr, "appending failed. Resize not implemented yet.");
+  } else {
+    arr->count++;
+    /* I think we have to put the element at the end of the memory block in the arr? */
+  }
   // Resize the array if the number of elements is over capacity
   // or throw an error if resize isn't implemented yet.
 
