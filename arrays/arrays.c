@@ -23,10 +23,8 @@ Array *create_array (int capacity) {
   Array *newArray = malloc(sizeof(Array));
   newArray->capacity = capacity;
   newArray->count = 0;
-  newArray->elements = malloc(capacity * sizeof(char));
-  /* not sure what elments is/are */ 
-  /* newArray->elements = */ 
-  /* newArray->count = capacity/sizeof(elments) */
+
+  /* newArray->elements = malloc(capacity * sizeof(char)); */
 
   return newArray;
 
@@ -116,9 +114,17 @@ void arr_insert(Array *arr, char *element, int index) {
  * Append an element to the end of the array
  *****/
 void arr_append(Array *arr, char *element) {
+  /* To append. Take the pointer pointer and write in the new element. */
   if(arr->capacity < arr->count + 1) {
     fprintf(stderr, "appending failed. Resize not implemented yet.");
   } else {
+    int counter = arr->count;
+    while(*element != '\0') 
+    {
+      arr->elements[counter] = element;
+      element++; 
+    }
+
     arr->count++;
     /* I think we have to put the element at the end of the memory block in the arr? */
   }
