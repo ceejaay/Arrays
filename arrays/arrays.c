@@ -4,8 +4,10 @@
 #include <errno.h>
 
 typedef struct Array {
+  /* 16 bytes for this array? */
   int capacity;  // How many elements can this array hold?
   int count;  // How many states does the array currently hold?
+  /* pointer is eight bytes*/
   char **elements;  // The string elements contained in the array
 } Array;
 
@@ -15,7 +17,7 @@ typedef struct Array {
  *   CREATE, DESTROY, RESIZE FUNCTIONS
  *
  ************************************/
-
+/* char hello[5]; */
 /*****
  * Allocate memory for a new array
  *****/
@@ -23,8 +25,8 @@ Array *create_array (int capacity) {
   Array *newArray = malloc(sizeof(Array));
   newArray->capacity = capacity;
   newArray->count = 0;
-
-  /* newArray->elements = malloc(capacity * sizeof(char)); */
+  /* newArray->elements = elements[capacity]; */
+  newArray->elements = malloc(capacity * sizeof(newArray->elements));
 
   return newArray;
 
@@ -124,13 +126,11 @@ void arr_append(Array *arr, char *element) {
       arr->elements[counter] = element;
       element++; 
     }
-
     arr->count++;
     /* I think we have to put the element at the end of the memory block in the arr? */
   }
   // Resize the array if the number of elements is over capacity
   // or throw an error if resize isn't implemented yet.
-
   // Copy the element and add it to the end of the array
 
   // Increment count by 1
@@ -159,7 +159,7 @@ void arr_remove(Array *arr, char *element) {
  * Utility function to print an array.
  *****/
 void arr_print(Array *arr) {
-  printf("[");
+
   for (int i = 0 ; i < arr->count ; i++) {
     printf("%s", arr->elements[i]);
     if (i != arr->count - 1) {
