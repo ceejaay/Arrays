@@ -29,10 +29,6 @@ Array *create_array (int capacity) {
   newArray->elements = malloc(capacity * sizeof(newArray->elements));
 
   return newArray;
-
-
-
-
   // Allocate memory for the Array struct
 
   // Set initial values for capacity and count
@@ -46,10 +42,12 @@ Array *create_array (int capacity) {
  * Free memory for an array and all of its stored elements
  *****/
 void destroy_array(Array *arr) {
-  if(arr != NULL) {
-    free(arr->elements);
-    free(arr);
+  for(int i =0; i<arr->count; i++) {
+    free(arr->elements[i]);
   }
+  free(arr->elements);
+  free(arr);
+  /* might need a loop here? */
   // Free all elements
 
   // Free array
@@ -88,6 +86,12 @@ void resize_array(Array *arr) {
  * Throw an error if the index is out of range.
  *****/
 char *arr_read(Array *arr, int index) {
+  if (index >= arr->count) {
+    printf("Error: index out of range");
+    return NULL;
+  }
+
+  return arr->elements[index];
 
   // Throw an error if the index is greater or equal to than the current count
 
@@ -99,6 +103,31 @@ char *arr_read(Array *arr, int index) {
  * Insert an element to the array at the given index
  *****/
 void arr_insert(Array *arr, char *element, int index) {
+  if(index > arr->capacity) {
+    printf("Error: index out of range\n");
+  } else if(arr->count +1 > arr->capacity) {
+
+  } else {
+    for(int i = index; i < arr->count + 1 ; i++) {
+      arr->elements[i + 1] = arr->elements[i]
+    }
+    char *new_element strdup(element);
+    arr->elements[index] = new_element;
+    arr->count++;
+    for(int i = index; arr->count; i++) {
+      /* start the index. */
+    /* printf("should be a new element"); */
+
+    arr->count++;
+    printf("new count %d\n", arr->count);
+  }
+  /* copy all the elements to a temp array */
+  /* if the old capacity is less than the capacity of the capacity with the new elements, then resize the array. */
+  /* Move every element after the insert index to the right one position. */
+  /* copy the element and add it to the array */
+  /* increment the count by one. */
+
+}
 
   // Throw an error if the index is greater than the current count
 
@@ -120,12 +149,17 @@ void arr_append(Array *arr, char *element) {
   if(arr->capacity < arr->count + 1) {
     fprintf(stderr, "appending failed. Resize not implemented yet.");
   } else {
-    int counter = arr->count;
-    while(*element != '\0') 
-    {
-      arr->elements[counter] = element;
-      element++; 
+    char *new_element = malloc(strlen(element) * sizeof(char));
+    int length = strlen(element) + 1;
+    for( int i = 0; i<length; i ++ ) {
+      new_element[i] = element[i];
     }
+    arr->elements[arr->count] = new_element;
+    arr->count++;
+  }
+
+  /* how to find the length of a pointer */
+
     arr->count++;
     /* I think we have to put the element at the end of the memory block in the arr? */
   }
@@ -135,7 +169,7 @@ void arr_append(Array *arr, char *element) {
 
   // Increment count by 1
 
-}
+
 
 /*****
  * Remove the first occurence of the given element from the array,
