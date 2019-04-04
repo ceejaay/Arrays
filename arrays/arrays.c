@@ -4,8 +4,10 @@
 #include <errno.h>
 
 typedef struct Array {
+  /* 16 bytes for this array? */
   int capacity;  // How many elements can this array hold?
   int count;  // How many states does the array currently hold?
+  /* pointer is eight bytes*/
   char **elements;  // The string elements contained in the array
 } Array;
 
@@ -15,11 +17,18 @@ typedef struct Array {
  *   CREATE, DESTROY, RESIZE FUNCTIONS
  *
  ************************************/
-
+/* char hello[5]; */
 /*****
  * Allocate memory for a new array
  *****/
 Array *create_array (int capacity) {
+  Array *newArray = malloc(sizeof(Array));
+  newArray->capacity = capacity;
+  newArray->count = 0;
+  /* newArray->elements = elements[capacity]; */
+  newArray->elements = malloc(capacity * sizeof(newArray->elements));
+
+  return newArray;
   // Allocate memory for the Array struct
 
   // Set initial values for capacity and count
@@ -33,7 +42,12 @@ Array *create_array (int capacity) {
  * Free memory for an array and all of its stored elements
  *****/
 void destroy_array(Array *arr) {
-
+  for(int i =0; i<arr->count; i++) {
+    free(arr->elements[i]);
+  }
+  free(arr->elements);
+  free(arr);
+  /* might need a loop here? */
   // Free all elements
 
   // Free array
@@ -45,6 +59,15 @@ void destroy_array(Array *arr) {
  * from old to new
  *****/
 void resize_array(Array *arr) {
+
+  char **new_storage = malloc((arr->capacity * 2) * sizeof(char *));
+  for(int i= 0; i < arr->count; i++) {
+    new_storage[i] = arr->elements[i];
+  }
+  free(arr->elements);
+  arr->elements = new_storage;
+  arr->capacity = arr->capacity * 2;
+
 
   // Create a new element storage with double capacity
 
@@ -70,6 +93,12 @@ void resize_array(Array *arr) {
  * Throw an error if the index is out of range.
  *****/
 char *arr_read(Array *arr, int index) {
+  if (index >= arr->count) {
+    printf("Error: index out of range");
+    return NULL;
+  }
+
+  return arr->elements[index];
 
   // Throw an error if the index is greater or equal to than the current count
 
@@ -81,16 +110,24 @@ char *arr_read(Array *arr, int index) {
  * Insert an element to the array at the given index
  *****/
 void arr_insert(Array *arr, char *element, int index) {
+  if(index > arr->count) {
+    printf("Error: index out of range\n");
+    /* exit(1); */
+    return;
+  }
 
-  // Throw an error if the index is greater than the current count
+  if (arr->count + 1  > arr->capacity) {
+    /* printf("Error: index out of range"); */
+    /* exit(1); */
+    resize_array(arr);
+  }
 
-  // Resize the array if the number of elements is over capacity
-
-  // Move every element after the insert index to the right one position
-
-  // Copy the element and add it to the array
-
-  // Increment count by 1
+  for(int i = arr->count; i > index ; i--) {
+    arr->elements[i] = arr->elements[i - 1];
+  }
+  char *new_element = strdup(element);
+  arr->elements[index] = new_element;
+  arr->count++;
 
 }
 
@@ -98,15 +135,27 @@ void arr_insert(Array *arr, char *element, int index) {
  * Append an element to the end of the array
  *****/
 void arr_append(Array *arr, char *element) {
-
+  /* To append. Take the pointer pointer and write in the new element. */
+  if(arr->capacity < arr->count + 1) {
+    resize_array(arr);
+    }
+    char *new_element = malloc(strlen(element) * sizeof(char));
+    int length = strlen(element) + 1;
+    for( int i = 0; i<length; i ++ ) {
+      new_element[i] = element[i];
+    }
+    arr->elements[arr->count] = new_element;
+    arr->count++;
+  /* how to find the length of a pointer */
+    /* I think we have to put the element at the end of the memory block in the arr? */
+  }
   // Resize the array if the number of elements is over capacity
   // or throw an error if resize isn't implemented yet.
-
   // Copy the element and add it to the end of the array
 
   // Increment count by 1
 
-}
+
 
 /*****
  * Remove the first occurence of the given element from the array,
@@ -115,6 +164,7 @@ void arr_append(Array *arr, char *element) {
  * Throw an error if the value is not found.
  *****/
 void arr_remove(Array *arr, char *element) {
+
 
   // Search for the first occurence of the element and remove it.
   // Don't forget to free its memory!
@@ -130,7 +180,7 @@ void arr_remove(Array *arr, char *element) {
  * Utility function to print an array.
  *****/
 void arr_print(Array *arr) {
-  printf("[");
+
   for (int i = 0 ; i < arr->count ; i++) {
     printf("%s", arr->elements[i]);
     if (i != arr->count - 1) {
@@ -152,7 +202,7 @@ int main(void)
   arr_insert(arr, "STRING2", 0);
   arr_insert(arr, "STRING3", 1);
   arr_print(arr);
-  arr_remove(arr, "STRING3");
+  /* arr_remove(arr, "STRING3"); */
   arr_print(arr);
 
   destroy_array(arr);
